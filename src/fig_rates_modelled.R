@@ -9,12 +9,12 @@ library(docopt)
 
 '
 Usage:
-fig_rates_direct_modelled.R [options]
+fig_rates_modelled.R [options]
 
 Options:
 --sex [default: Female]
 --indigenous [default: Indigenous]
---variant [default: baseline]
+--variant [default: Baseline]
 ' -> doc
 opts <- docopt(doc)
 SEX <- opts$sex
@@ -69,7 +69,7 @@ p <- rate %>%
     xlab("Age") +
     ylab("")
 
-file <- sprintf("out/fig_rates_direct_modelled_%s_%s.pdf", SEX, INDIGENOUS)
+file <- sprintf("out/fig_rates_modelled_%s_%s_%s.pdf", SEX, INDIGENOUS, variant)
 graphics.off()
 pdf(file,
     width = 4.8,

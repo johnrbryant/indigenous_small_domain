@@ -9,7 +9,7 @@ Usage:
 replicate_data.R [options]
 
 Options:
---variant [default: baseline]
+--variant [default: Baseline]
 --seed [default: 0]
 ' -> doc
 opts <- docopt(doc)
@@ -18,22 +18,19 @@ seed <- opts$seed %>% as.numeric()
 
 set.seed(seed)
 
+conc_states <- readRDS("out/conc_states.rds")
+
 filename_est <- sprintf("out/model_%s.est", variant)
 filename_replicate <- sprintf("out/replicate_data_%s.pred", variant)
 
-exposure_actual <- fetch(filename_est,
-                         where = "exposure")
-
-labels_region_actual <- dimnames(exposure_actual)$region
-labels_region_replicate <- paste(labels_region_actual, "replicate", sep = "_")
-
-exposure_replicate <- exposure_actual %>%
+exposure <- fetch(filename_est, where = "exposure") %>%
     recodeCategories(dimension = "region",
-                     old = labels_region_actual,
-                     new = labels_region_replicate)
-    
+                     concordance = conc_states)
+
+labels_pred <- dimnames(exposure)$region
+
 predictModel(filenameEst = filename_est,
              filenamePred = filename_replicate,
              along = "region",
-             labels = labels_region_replicate,
-             exposure = exposure_replicate)
+             labels = labels_pred,
+             exposure = exposure)

@@ -1,17 +1,14 @@
 
-N_BURNIN = 10000
-N_SIM = 10000
+N_BURNIN = 1000
+N_SIM = 1000
 N_CHAIN = 4
-N_THIN = 40
+N_THIN = 5
 SEED = 0
+N_REPLICATE = 19
 
 .PHONY: all
-all: out/fig_rates_direct_female.pdf \
-     out/fig_rates_direct_male.pdf \
-     out/fig_rates_direct_modelled_female_indigenous_baseline.pdf \
-     out/fig_rates_direct_modelled_male_indigenous_baseline.pdf \
-     out/fig_rates_direct_modelled_female_nonindigenous_baseline.pdf \
-     out/fig_rates_direct_modelled_male_nonindigenous_baseline.pdf
+all: all_fig.pdf
+
 
 ## Prepare data
 
@@ -23,15 +20,31 @@ out/population.rds : src/population.R \
                      data/DEATHS_INDIGENOUS_01032019121919871.csv
 	Rscript $<
 
+out/conc_states.rds : src/conc_states.R
+	Rscript $<
+
+
+## Graphs of data
+
+out/fig_data_deaths.pdf : src/fig_data_deaths.R \
+                          out/deaths.rds \
+                          out/conc_states.rds
+	Rscript $<
+
+out/fig_data_population.pdf : src/fig_data_population.R \
+                              out/population.rds \
+                              out/conc_states.rds
+	Rscript $<
+
 
 ## Graphs of direct estimates of rates
 
-out/fig_rates_direct_female.pdf : src/fig_rates_direct.R \
+out/fig_rates_direct_Female.pdf : src/fig_rates_direct.R \
                                   out/deaths.rds \
                                   out/population.rds
 	Rscript $< --sex Female
 
-out/fig_rates_direct_male.pdf : src/fig_rates_direct.R \
+out/fig_rates_direct_Male.pdf : src/fig_rates_direct.R \
                                 out/deaths.rds \
                                 out/population.rds
 	Rscript $< --sex Male
@@ -50,46 +63,118 @@ out/model_baseline.est : src/model_baseline.R \
 
 ## Replicate data
 
-out/replicate_data_baseline.pred : src/replicate_data.R \
+out/replicate_data_Baseline.pred : src/replicate_data.R \
+                                   out/conc_states.rds \
                                    out/model_baseline.est
-	Rscript $< --variant baseline  --seed $(SEED)
+	Rscript $< --variant Baseline  --seed $(SEED)
 
+
+## Life expectancy
+
+out/life_expectancy_direct.rds : src/life_expectancy_direct.R \
+                                 out/deaths.rds \
+                                 out/population.rds
+	Rscript $<
+
+out/life_expectancy_modelled_Baseline.rds : src/life_expectancy_modelled.R \
+                                            out/model_baseline.est
+	Rscript $< --variant Baseline
 
 
 ## Graphs of modelled estimates of rates
 
-out/fig_rates_direct_modelled_female_indigenous_baseline.pdf : src/fig_rates_direct_modelled.R \
-                                                               out/deaths.rds \
-                                                               out/population.rds \
-                                                               out/model_baseline.est
-	Rscript $< --sex Female --indigenous Indigenous --variant baseline
+out/fig_rates_modelled_Female_Indigenous_Baseline.pdf : src/fig_rates_modelled.R \
+                                                        out/deaths.rds \
+                                                        out/population.rds \
+                                                        out/model_baseline.est
+	Rscript $< --sex Female --indigenous Indigenous --variant Baseline
 
-out/fig_rates_direct_modelled_male_indigenous_baseline.pdf : src/fig_rates_direct_modelled.R \
-                                                             out/deaths.rds \
-                                                             out/population.rds \
-                                                             out/model_baseline.est
-	Rscript $< --sex Male --indigenous Indigenous --variant baseline
+out/fig_rates_modelled_Male_Indigenous_Baseline.pdf : src/fig_rates_modelled.R \
+                                                      out/deaths.rds \
+                                                      out/population.rds \
+                                                      out/model_baseline.est
+	Rscript $< --sex Male --indigenous Indigenous --variant Baseline
 
-out/fig_rates_direct_modelled_female_nonindigenous_baseline.pdf : src/fig_rates_direct_modelled.R \
-                                                                  out/deaths.rds \
-                                                                  out/population.rds \
-                                                                  out/model_baseline.est
-	Rscript $< --sex Female --indigenous Non-Indigenous --variant baseline
+out/fig_rates_modelled_Female_Non-Indigenous_Baseline.pdf : src/fig_rates_modelled.R \
+                                                           out/deaths.rds \
+                                                           out/population.rds \
+                                                           out/model_baseline.est
+	Rscript $< --sex Female --indigenous Non-Indigenous --variant Baseline
 
-out/fig_rates_direct_modelled_male_nonindigenous_baseline.pdf : src/fig_rates_direct_modelled.R \
-                                                                out/deaths.rds \
-                                                                out/population.rds \
-                                                                out/model_baseline.est
-	Rscript $< --sex Male --indigenous Non-Indigenous --variant baseline
+out/fig_rates_modelled_Male_Non-Indigenous_Baseline.pdf : src/fig_rates_modelled.R \
+                                                         out/deaths.rds \
+                                                         out/population.rds \
+                                                         out/model_baseline.est
+	Rscript $< --sex Male --indigenous Non-Indigenous --variant Baseline
 
 
 ## Graphs of replicate data
 
-out/fig_replicate_data_female_indigenous_baseline.pdf : src/fig_replicate_data.R \
-                                                        out/deaths.rds \
-                                                        out/population.rds \
-                                                        out/model_baseline.est
-	Rscript $< --sex Female --indigenous Indigenous --variant baseline
+out/fig_replicate_data_Female_Indigenous_Baseline.pdf : src/fig_replicate_data.R \
+                                                        out/model_baseline.est \
+                                                        out/replicate_data_Baseline.pred \
+                                                        out/conc_states.rds
+	Rscript $< --n_replicate $(N_REPLICATE) \
+                   --sex Female \
+                   --indigenous Indigenous \
+                   --variant Baseline
+
+out/fig_replicate_data_Male_Indigenous_Baseline.pdf : src/fig_replicate_data.R \
+                                                      out/model_baseline.est \
+                                                      out/replicate_data_Baseline.pred \
+                                                      out/conc_states.rds
+	Rscript $< --n_replicate $(N_REPLICATE) \
+                   --sex Male \
+                   --indigenous Indigenous \
+                   --variant Baseline
+
+out/fig_replicate_data_Female_Non-Indigenous_Baseline.pdf : src/fig_replicate_data.R \
+                                                            out/model_baseline.est \
+                                                            out/replicate_data_Baseline.pred \
+                                                            out/conc_states.rds
+	Rscript $< --n_replicate $(N_REPLICATE) \
+                   --sex Female \
+                   --indigenous Non-Indigenous \
+                   --variant Baseline
+
+out/fig_replicate_data_Male_Non-Indigenous_Baseline.pdf : src/fig_replicate_data.R \
+                                                          out/model_baseline.est \
+                                                          out/replicate_data_Baseline.pred \
+                                                          out/conc_states.rds
+	Rscript $< --n_replicate $(N_REPLICATE) \
+                   --sex Male \
+                   --indigenous Non-Indigenous \
+                   --variant Baseline
+
+
+## Graphs of life expectancy
+
+out/fig_life_expectancy_Baseline.pdf : src/fig_life_expectancy.R \
+                                       out/life_expectancy_modelled_Baseline.rds \
+                                       out/life_expectancy_direct.rds
+	Rscript $< --variant Baseline
+
+
+
+## Documents
+
+all_fig.pdf : all_fig.tex \
+              out/fig_data_deaths.pdf \
+              out/fig_data_population.pdf \
+              out/fig_rates_direct_Female.pdf \
+              out/fig_rates_direct_Male.pdf \
+              out/fig_rates_modelled_Female_Indigenous_Baseline.pdf \
+              out/fig_rates_modelled_Male_Indigenous_Baseline.pdf \
+              out/fig_rates_modelled_Female_Non-Indigenous_Baseline.pdf \
+              out/fig_rates_modelled_Male_Non-Indigenous_Baseline.pdf \
+              out/fig_replicate_data_Female_Indigenous_Baseline.pdf \
+              out/fig_replicate_data_Male_Indigenous_Baseline.pdf \
+              out/fig_replicate_data_Female_Non-Indigenous_Baseline.pdf \
+              out/fig_replicate_data_Male_Non-Indigenous_Baseline.pdf \
+              out/fig_life_expectancy_Baseline.pdf
+	pdflatex -interaction=batchmode all_fig
+	pdflatex -interaction=batchmode all_fig
+
 
 
 ## Clean up

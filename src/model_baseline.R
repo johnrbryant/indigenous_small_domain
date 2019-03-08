@@ -44,27 +44,5 @@ estimateModel(model,
               nThin = n_thin)
 Sys.time()
 
-
 options(width = 120)
 fetchSummary(filename)
-
-
-              
-
-
-filename_est <- "out/model_baseline.est"
-filename_pred <- "out/model_baseline.pred"
-                          
-predictModel(filenameEst = filename_est,
-             filenamePred = filename_pred,
-             along = "region",
-             labels = LETTERS[1:5])
-
-rate <- fetch(filename_pred, c("mod", "li", "ra")) %>%
-    as.data.frame(direction = "long", midpoints = "age", stringsAsFactors = FALSE) %>%
-    filter(time == "2016" & iteration <= 10 & sex == "Female" & indigenous == "Indigenous")
-
-xyplot(value ~ age | iteration,
-       data = rate,
-       type = "b",
-      groups = region)
