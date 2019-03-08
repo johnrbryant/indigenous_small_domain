@@ -39,15 +39,15 @@ out/fig_data_population.pdf : src/fig_data_population.R \
 
 ## Graphs of direct estimates of rates
 
-out/fig_rates_direct_Female.pdf : src/fig_rates_direct.R \
-                                  out/deaths.rds \
-                                  out/population.rds
-	Rscript $< --sex Female
-
-out/fig_rates_direct_Male.pdf : src/fig_rates_direct.R \
+out/fig_rates_direct_2010.pdf : src/fig_rates_direct.R \
                                 out/deaths.rds \
                                 out/population.rds
-	Rscript $< --sex Male
+	Rscript $< --time 2010
+
+out/fig_rates_direct_2016.pdf : src/fig_rates_direct.R \
+                                out/deaths.rds \
+                                out/population.rds
+	Rscript $< --time 2016
 
 
 ## Model
@@ -60,6 +60,7 @@ out/model_baseline.est : src/model_baseline.R \
                    --n_chain $(N_CHAIN) \
                    --n_thin $(N_THIN) \
                    --seed $(SEED)
+
 
 ## Replicate data
 
@@ -83,29 +84,13 @@ out/life_expectancy_modelled_Baseline.rds : src/life_expectancy_modelled.R \
 
 ## Graphs of modelled estimates of rates
 
-out/fig_rates_modelled_Female_Indigenous_Baseline.pdf : src/fig_rates_modelled.R \
-                                                        out/deaths.rds \
-                                                        out/population.rds \
-                                                        out/model_baseline.est
-	Rscript $< --sex Female --indigenous Indigenous --variant Baseline
+out/fig_rates_modelled_2010_Baseline.pdf : src/fig_rates_modelled.R \
+                                           out/model_baseline.est
+	Rscript $< --time 2010 --variant Baseline
 
-out/fig_rates_modelled_Male_Indigenous_Baseline.pdf : src/fig_rates_modelled.R \
-                                                      out/deaths.rds \
-                                                      out/population.rds \
-                                                      out/model_baseline.est
-	Rscript $< --sex Male --indigenous Indigenous --variant Baseline
-
-out/fig_rates_modelled_Female_Non-Indigenous_Baseline.pdf : src/fig_rates_modelled.R \
-                                                           out/deaths.rds \
-                                                           out/population.rds \
-                                                           out/model_baseline.est
-	Rscript $< --sex Female --indigenous Non-Indigenous --variant Baseline
-
-out/fig_rates_modelled_Male_Non-Indigenous_Baseline.pdf : src/fig_rates_modelled.R \
-                                                         out/deaths.rds \
-                                                         out/population.rds \
-                                                         out/model_baseline.est
-	Rscript $< --sex Male --indigenous Non-Indigenous --variant Baseline
+out/fig_rates_modelled_2016_Baseline.pdf : src/fig_rates_modelled.R \
+                                           out/model_baseline.est
+	Rscript $< --time 2016 --variant Baseline
 
 
 ## Graphs of replicate data
@@ -150,8 +135,7 @@ out/fig_replicate_data_Male_Non-Indigenous_Baseline.pdf : src/fig_replicate_data
 ## Graphs of life expectancy
 
 out/fig_life_expectancy_Baseline.pdf : src/fig_life_expectancy.R \
-                                       out/life_expectancy_modelled_Baseline.rds \
-                                       out/life_expectancy_direct.rds
+                                       out/life_expectancy_modelled_Baseline.rds
 	Rscript $< --variant Baseline
 
 
@@ -161,12 +145,10 @@ out/fig_life_expectancy_Baseline.pdf : src/fig_life_expectancy.R \
 all_fig.pdf : all_fig.tex \
               out/fig_data_deaths.pdf \
               out/fig_data_population.pdf \
-              out/fig_rates_direct_Female.pdf \
-              out/fig_rates_direct_Male.pdf \
-              out/fig_rates_modelled_Female_Indigenous_Baseline.pdf \
-              out/fig_rates_modelled_Male_Indigenous_Baseline.pdf \
-              out/fig_rates_modelled_Female_Non-Indigenous_Baseline.pdf \
-              out/fig_rates_modelled_Male_Non-Indigenous_Baseline.pdf \
+              out/fig_rates_direct_2010.pdf \
+              out/fig_rates_direct_2016.pdf \
+              out/fig_rates_modelled_2010_Baseline.pdf \
+              out/fig_rates_modelled_2016_Baseline.pdf \
               out/fig_replicate_data_Female_Indigenous_Baseline.pdf \
               out/fig_replicate_data_Male_Indigenous_Baseline.pdf \
               out/fig_replicate_data_Female_Non-Indigenous_Baseline.pdf \
