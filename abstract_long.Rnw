@@ -1,0 +1,63 @@
+
+
+\documentclass{article}
+
+\usepackage{amsmath}
+\usepackage{bm}
+\usepackage{graphicx}
+\usepackage{natbib}
+\usepackage{xcite}
+\externalcitedocument{bibliography}
+
+\begin{document}
+
+\title{Small area estimation of indigenous life expectancy in Australia}
+
+\maketitle
+
+<<setup_document, echo = FALSE, message = FALSE>>=
+library(demest)
+library(dplyr)
+filename_baseline <- "out/model_baseline.est"
+@
+
+
+\section{Introduction}
+
+
+\section{Data}
+
+
+\section{Methods}
+
+<<setup_methods, echo = FALSE, message = FALSE>>=
+priors_baseline <- demest:::describePriors(filename_baseline)
+@
+
+
+
+\begin{equation}
+  y_{asirt} \sim \text{Poisson}(\gamma_{asirt} w_{asirt})
+\end{equation}
+
+\begin{equation}
+  \log \gamma_{asirt} \sim \text{N}(x_{asirt} \beta, \sigma^2)
+\end{equation}
+
+\input{out/tab_priors_Baseline}
+
+
+\section{Results}
+
+
+\section{Discussion}
+
+\citet{bryant2018bayesian}
+
+\bibliographystyle{apalike}
+\bibliography{abstract_long}
+
+  
+
+
+\end{document}

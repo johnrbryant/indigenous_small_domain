@@ -5,7 +5,7 @@ library(docopt)
 
 '
 Usage:
-model_baseline.R [options]
+model_Baseline.R [options]
 
 Options:
 --n_burnin [default: 5]
@@ -33,7 +33,7 @@ model <- Model(y ~ Poisson(mean ~ (age * sex + region + time) * indigenous),
                jump = 0.045)
 
 Sys.time()
-filename <- "out/model_baseline.est"
+filename <- "out/model_Baseline.est"
 estimateModel(model,
               y = deaths,
               exposure = population,

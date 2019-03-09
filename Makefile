@@ -7,7 +7,8 @@ SEED = 0
 N_REPLICATE = 19
 
 .PHONY: all
-all: all_fig.pdf
+all: all_fig.pdf \
+     abstract_long.pdf
 
 
 ## Prepare data
@@ -52,7 +53,7 @@ out/fig_rates_direct_2016.pdf : src/fig_rates_direct.R \
 
 ## Model
 
-out/model_baseline.est : src/model_baseline.R \
+out/model_Baseline.est : src/model_baseline.R \
                          out/deaths.rds \
                          out/population.rds
 	Rscript $< --n_burnin $(N_BURNIN) \
@@ -62,11 +63,19 @@ out/model_baseline.est : src/model_baseline.R \
                    --seed $(SEED)
 
 
+## Table of priors
+
+out/tab_priors_Baseline.tex : src/tab_priors.R \
+                              out/model_Baseline.est
+	Rscript $< --variant Baseline
+
+
+
 ## Replicate data
 
 out/replicate_data_Baseline.pred : src/replicate_data.R \
                                    out/conc_states.rds \
-                                   out/model_baseline.est
+                                   out/model_Baseline.est
 	Rscript $< --variant Baseline  --seed $(SEED)
 
 
@@ -78,25 +87,25 @@ out/life_expectancy_direct.rds : src/life_expectancy_direct.R \
 	Rscript $<
 
 out/life_expectancy_modelled_Baseline.rds : src/life_expectancy_modelled.R \
-                                            out/model_baseline.est
+                                            out/model_Baseline.est
 	Rscript $< --variant Baseline
 
 
 ## Graphs of modelled estimates of rates
 
 out/fig_rates_modelled_2010_Baseline.pdf : src/fig_rates_modelled.R \
-                                           out/model_baseline.est
+                                           out/model_Baseline.est
 	Rscript $< --time 2010 --variant Baseline
 
 out/fig_rates_modelled_2016_Baseline.pdf : src/fig_rates_modelled.R \
-                                           out/model_baseline.est
+                                           out/model_Baseline.est
 	Rscript $< --time 2016 --variant Baseline
 
 
 ## Graphs of replicate data
 
 out/fig_replicate_data_Female_Indigenous_Baseline.pdf : src/fig_replicate_data.R \
-                                                        out/model_baseline.est \
+                                                        out/model_Baseline.est \
                                                         out/replicate_data_Baseline.pred \
                                                         out/conc_states.rds
 	Rscript $< --n_replicate $(N_REPLICATE) \
@@ -105,7 +114,7 @@ out/fig_replicate_data_Female_Indigenous_Baseline.pdf : src/fig_replicate_data.R
                    --variant Baseline
 
 out/fig_replicate_data_Male_Indigenous_Baseline.pdf : src/fig_replicate_data.R \
-                                                      out/model_baseline.est \
+                                                      out/model_Baseline.est \
                                                       out/replicate_data_Baseline.pred \
                                                       out/conc_states.rds
 	Rscript $< --n_replicate $(N_REPLICATE) \
@@ -114,7 +123,7 @@ out/fig_replicate_data_Male_Indigenous_Baseline.pdf : src/fig_replicate_data.R \
                    --variant Baseline
 
 out/fig_replicate_data_Female_Non-Indigenous_Baseline.pdf : src/fig_replicate_data.R \
-                                                            out/model_baseline.est \
+                                                            out/model_Baseline.est \
                                                             out/replicate_data_Baseline.pred \
                                                             out/conc_states.rds
 	Rscript $< --n_replicate $(N_REPLICATE) \
@@ -123,7 +132,7 @@ out/fig_replicate_data_Female_Non-Indigenous_Baseline.pdf : src/fig_replicate_da
                    --variant Baseline
 
 out/fig_replicate_data_Male_Non-Indigenous_Baseline.pdf : src/fig_replicate_data.R \
-                                                          out/model_baseline.est \
+                                                          out/model_Baseline.est \
                                                           out/replicate_data_Baseline.pred \
                                                           out/conc_states.rds
 	Rscript $< --n_replicate $(N_REPLICATE) \
@@ -142,6 +151,9 @@ out/fig_life_expectancy_Baseline.pdf : src/fig_life_expectancy.R \
 
 ## Documents
 
+all_fig.tex : all_fig.Rnw
+	Rscript -e "knitr::knit('$<')"
+
 all_fig.pdf : all_fig.tex \
               out/fig_data_deaths.pdf \
               out/fig_data_population.pdf \
@@ -158,6 +170,18 @@ all_fig.pdf : all_fig.tex \
 	pdflatex -interaction=batchmode all_fig
 
 
+abstract_long.tex : abstract_long.Rnw
+	Rscript -e "knitr::knit('$<')"
+
+abstract_long.pdf : abstract_long.tex \
+                    abstract_long.bib \
+                    out/tab_priors_Baseline.tex
+	pdflatex -interaction=batchmode abstract_long
+	bibtex -terse abstract_long
+	pdflatex -interaction=batchmode abstract_long
+	pdflatex -interaction=batchmode abstract_long
+
+
 
 ## Clean up
 
@@ -165,4 +189,9 @@ all_fig.pdf : all_fig.tex \
 clean:
 	rm -rf out
 	mkdir -p out
+
+.PHONY: cleantex
+cleantex:
+	rm -f *.aux *.log *.toc *.blg *.bbl *.synctex.gz *.idx *.lof *.lot *.tex
+
 

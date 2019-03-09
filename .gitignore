@@ -12,6 +12,7 @@ src-x86_64
 *.lot
 *.toc
 *.synctex.gz
+*.tex
 Rplots.pdf
 *.est
 *.pred
