@@ -1,8 +1,8 @@
 
-N_BURNIN = 1000
-N_SIM = 1000
+N_BURNIN = 10000
+N_SIM = 10000
 N_CHAIN = 4
-N_THIN = 5
+N_THIN = 40
 SEED = 0
 N_REPLICATE = 19
 
@@ -175,7 +175,11 @@ abstract_long.tex : abstract_long.Rnw
 
 abstract_long.pdf : abstract_long.tex \
                     abstract_long.bib \
-                    out/tab_priors_Baseline.tex
+                    out/fig_rates_direct_2016.pdf \
+                    out/tab_priors_Baseline.tex \
+                    out/fig_rates_modelled_2016_Baseline.pdf \
+                    out/fig_replicate_data_Female_Indigenous_Baseline.pdf \
+                    out/fig_life_expectancy_Baseline.pdf
 	pdflatex -interaction=batchmode abstract_long
 	bibtex -terse abstract_long
 	pdflatex -interaction=batchmode abstract_long

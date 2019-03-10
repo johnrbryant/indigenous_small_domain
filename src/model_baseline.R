@@ -28,6 +28,7 @@ population <- readRDS("out/population.rds")
 model <- Model(y ~ Poisson(mean ~ (age * sex + region + time) * indigenous),
                age ~ DLM(damp = NULL,
                          covariates = Covariates(infant = TRUE)),
+               time ~ DLM(damp = NULL),
                time:indigenous ~ DLM(trend = NULL,
                                      damp = NULL),
                jump = 0.045)

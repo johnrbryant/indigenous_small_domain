@@ -38,6 +38,6 @@ file <- sprintf("out/fig_rates_direct_%s.pdf", TIME)
 graphics.off()
 pdf(file,
     width = 4.8,
-    height = 6)
+    height = 5)
 plot(p)
 dev.off()

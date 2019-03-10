@@ -18,7 +18,9 @@ variant <- opts$variant
 filename <- sprintf("out/model_%s.est", variant)
 
 df <- describePriors(filename)
+label <- sprintf("tab:priors_%s", variant)
 xt <- xtable(df,
+             label = label,
              caption = "Priors for main effects and interactions")
 file <- sprintf("out/tab_priors_%s.tex", variant)
 print(xt,

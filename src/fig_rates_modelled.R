@@ -49,6 +49,6 @@ file <- sprintf("out/fig_rates_modelled_%s_%s.pdf", TIME, variant)
 graphics.off()
 pdf(file,
     width = 4.8,
-    height = 6)
+    height = 5)
 plot(p)
 dev.off()

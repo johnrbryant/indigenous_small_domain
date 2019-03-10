@@ -57,8 +57,8 @@ data <- rate %>%
 
 p <- ggplot(data, aes(x = region, y = value, group = age)) +
     facet_wrap(vars(dataset)) +
-    geom_point(shape = 1, size = 0.8) +
-    geom_line(size = 0.3) +
+    geom_point(shape = 1, size = 0.8, color = "dark grey") +
+    geom_line(size = 0.3, color = "dark grey") +
     scale_y_log10(labels = function(x) format(x, scientific = FALSE)) +
     theme(text = element_text(size = 8),
           axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
@@ -69,6 +69,6 @@ file <- sprintf("out/fig_replicate_data_%s_%s_%s.pdf", SEX, INDIGENOUS, variant)
 graphics.off()
 pdf(file,
     width = 4.8,
-    height = 6)
+    height = 5)
 plot(p)
 dev.off()

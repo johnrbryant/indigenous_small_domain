@@ -42,6 +42,6 @@ file <- sprintf("out/fig_life_expectancy_%s.pdf", variant)
 graphics.off()
 pdf(file,
     width = 4.8,
-    height = 6)
+    height = 5)
 plot(p)
 dev.off()
